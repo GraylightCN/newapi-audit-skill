@@ -1,6 +1,6 @@
 ---
 name: graylight-audit
-description: Graylight NewAPI 账单查询 + 火山主账户余额监控，支持 daily report（cron）和交互查询。Use when querying Graylight NewAPI user balances, consumption logs, topups, channels, audit tokens, Volcengine Billing balances/bills, or preparing Feishu audit reports.
+description: Graylight NewAPI 账单查询与火山主账户余额监控 skill。当用户询问 NewAPI 用户余额、消费用量、充值记录、低余额用户、本月消费排名、channel 列表、audit token 管理，或询问火山账户余额、账单，或需要创建/执行查账日报（cron）、推送飞书消息时使用。Use when Jay asks about Graylight billing, user quotas, Volcengine balance, daily audit reports, or Feishu spending summaries.
 ---
 
 # Graylight Audit Skill
