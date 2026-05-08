@@ -1,0 +1,19 @@
+# Secrets / local env
+.env
+.env.*
+*.pem
+*.key
+*.token
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# Logs / temp
+*.log
+tmp/
