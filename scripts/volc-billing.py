@@ -59,11 +59,13 @@ def canonical_query(params: dict[str, object]) -> str:
 
 
 def sign(secret_key: str, date: str, region: str, string_to_sign: str) -> str:
-    # Volcengine API V4 signing key: HMAC(HMAC(HMAC(secret, date), region), service)
+    # Volcengine API V4 signing key:
+    # HMAC(HMAC(HMAC(HMAC(secret, date), region), service), "request")
     k_date = hmac_sha256(secret_key.encode("utf-8"), date)
     k_region = hmac_sha256(k_date, region)
     k_service = hmac_sha256(k_region, SERVICE)
-    return hmac.new(k_service, string_to_sign.encode("utf-8"), hashlib.sha256).hexdigest()
+    k_signing = hmac_sha256(k_service, "request")
+    return hmac.new(k_signing, string_to_sign.encode("utf-8"), hashlib.sha256).hexdigest()
 
 
 def request(action: str, extra_params: dict[str, object]) -> dict[str, object]:
