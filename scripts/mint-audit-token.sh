@@ -52,17 +52,15 @@ path = sys.argv[1]
 with open(path, 'r', encoding='utf-8') as f:
     data = json.load(f)
 
-candidates = [
-    data.get('token') if isinstance(data, dict) else None,
-    data.get('data', {}).get('token') if isinstance(data, dict) and isinstance(data.get('data'), dict) else None,
-    data.get('data', {}).get('key') if isinstance(data, dict) and isinstance(data.get('data'), dict) else None,
-    data.get('data', {}).get('value') if isinstance(data, dict) and isinstance(data.get('data'), dict) else None,
-]
-
-token = next((x for x in candidates if isinstance(x, str) and x), None)
-if not token:
+if not data.get('success'):
     print(json.dumps(data, ensure_ascii=False, indent=2), file=sys.stderr)
-    print('ERROR: token not found in response; inspect response shape and update mint helper if needed', file=sys.stderr)
+    print('ERROR: mint returned success=false', file=sys.stderr)
+    sys.exit(1)
+
+token = data.get('data', {}).get('token')
+if not isinstance(token, str) or not token:
+    print(json.dumps(data, ensure_ascii=False, indent=2), file=sys.stderr)
+    print('ERROR: data.data.token missing or empty in response; schema may have changed', file=sys.stderr)
     sys.exit(1)
 
 print(token)

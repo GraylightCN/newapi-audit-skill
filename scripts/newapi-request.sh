@@ -60,7 +60,7 @@ case "$token_type" in
       echo "ERROR: NEWAPI_AUDIT_TOKEN is required for TOKEN_TYPE=audit" >&2
       exit 2
     fi
-    headers+=( -H "Authorization: Bearer ***${NEWAPI_AUDIT_TOKEN}" )
+    headers+=( -H "Authorization: Bearer ${NEWAPI_AUDIT_TOKEN}" )
     ;;
   admin)
     if [[ -z "${NEWAPI_ADMIN_ACCESS_TOKEN:-}" ]]; then

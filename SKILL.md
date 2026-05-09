@@ -39,14 +39,14 @@ quota = ¥ * 500000
 **鉴权（所有查账请求）：**
 
 ```http
-Authorization: Bearer ***<NEWAPI_AUDIT_TOKEN>
+Authorization: Bearer <NEWAPI_AUDIT_TOKEN>
 ```
 
 使用通用脚本：
 
 ```bash
 NEWAPI_BASE_URL=https://ai.graylight.cn \
-NEWAPI_AUDIT_TOKEN=*** \
+NEWAPI_AUDIT_TOKEN=<token> \
 bash scripts/newapi-request.sh GET '/api/user/?page_size=100'
 ```
 
@@ -159,10 +159,10 @@ bash scripts/newapi-request.sh GET '/api/user/?page_size=100'
 ## Volcengine Billing API
 
 ```bash
-VOLC_ACCESS_KEY=*** VOLC_SECRET_KEY=*** \
+VOLC_ACCESS_KEY=<AK> VOLC_SECRET_KEY=<SK> \
 python scripts/volc-billing.py QueryBalanceAcct
 
-VOLC_ACCESS_KEY=*** VOLC_SECRET_KEY=*** \
+VOLC_ACCESS_KEY=<AK> VOLC_SECRET_KEY=<SK> \
 python scripts/volc-billing.py ListBill '{"BillPeriod":"2026-05"}'
 ```
 
@@ -233,4 +233,6 @@ description: |
 
 ## Audit Token 失效恢复
 
-查账返回 401/403 时 → 读 [references/admin-setup.md](references/admin-setup.md) 重新 mint，更新 `NEWAPI_AUDIT_TOKEN` secret。
+查账返回 401/403 时，需要人工介入重新 mint（skill 不自动 re-mint，避免 pod 常驻 admin 全权）。
+
+见 [references/admin-setup.md](references/admin-setup.md) 按
