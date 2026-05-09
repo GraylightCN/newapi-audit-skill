@@ -1,6 +1,6 @@
 ---
 name: graylight-audit
-description: Graylight NewAPI 账单查询与火山主账户余额监控。当用户询问 NewAPI 用户余额、消费用量、充值记录、低余额用户、消费排名、channel 列表时使用；当询问火山账户余额或账单时使用；当需要生成查账日报、创建查账 cron job 时使用。
+description: Graylight NewAPI 账单查询与火山主账户余额监控。当用户询问 NewAPI 用户余额、消费用量、充值记录、低余额用户、消费排名、channel 列表、auditToken/apiToken 报错时使用；当询问火山账户余额或账单时使用；当需要生成查账日报、创建查账 cron job 时使用。必须使用 NEWAPI_AUDIT_TOKEN + 下文白名单接口，不要推断需要 apiToken。
 metadata: {"openclaw": {"requires": {"env": ["NEWAPI_BASE_URL", "NEWAPI_AUDIT_TOKEN", "VOLC_ACCESS_KEY", "VOLC_SECRET_KEY"]}, "primaryEnv": "NEWAPI_AUDIT_TOKEN"}}
 ---
 
@@ -36,13 +36,21 @@ quota = ¥ * 500000
 
 ## NewAPI Audit API
 
+**核心规则（不要违反）：**
+
+- 查询余额/用户/消费/充值/channel **不需要 `apiToken`**；只使用 `NEWAPI_AUDIT_TOKEN`。
+- `NEWAPI_AUDIT_TOKEN` 是审计白名单 token，只能访问本节列出的接口；不要拿它调 `/api/user/self`。
+- 如果 `/api/user/self` 返回 `audit token: path not in audit allowlist`，这是正常的错误测试结果，**不能据此判断需要 `apiToken`**。
+- 如果本节列出的接口（如 `/api/user/?page_size=100`）返回 `path not in audit allowlist`，说明后端 audit allowlist 配置/部署有问题，应该反馈“后端白名单缺接口”，不要向 Jay 要 `apiToken`。
+- 如果返回 `Unauthorized, invalid access token`，先检查是否用了 `Authorization: Bearer <NEWAPI_AUDIT_TOKEN>`；不要改用用户 API token。
+
 **鉴权（所有查账请求）：**
 
 ```http
 Authorization: Bearer <NEWAPI_AUDIT_TOKEN>
 ```
 
-使用通用脚本：
+优先使用通用脚本，避免手写错 path/header：
 
 ```bash
 NEWAPI_BASE_URL=https://ai.graylight.cn \

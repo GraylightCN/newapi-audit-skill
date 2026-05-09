@@ -50,6 +50,23 @@ base="${NEWAPI_BASE_URL%/}"
 if [[ "$path" != /* ]]; then
   path="/$path"
 fi
+
+# Guardrails for agents: audit token is intentionally scoped to audit endpoints.
+# /api/user/self is a user-token endpoint and will return "path not in audit allowlist".
+# Do not infer that an apiToken is needed for Graylight audit queries.
+if [[ "$token_type" == "audit" ]]; then
+  case "$path" in
+    /api/user/self*)
+      echo "ERROR: /api/user/self is not an audit endpoint. Use /api/user/?page_size=100 or /api/user/<id> with NEWAPI_AUDIT_TOKEN; do not ask for apiToken." >&2
+      exit 2
+      ;;
+    /api/user/\?*|/api/user/|/api/user/[0-9]*|/api/log/\?*|/api/log/|/api/user/topup*|/api/channel/\?*|/api/channel/) ;;
+    *)
+      echo "WARNING: '$path' is not documented in graylight-audit SKILL.md audit allowlist; it may fail with path-not-allowed." >&2
+      ;;
+  esac
+fi
+
 url="$base$path"
 
 headers=( -H 'Accept: application/json' )
